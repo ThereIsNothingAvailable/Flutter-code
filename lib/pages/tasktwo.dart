@@ -80,13 +80,14 @@ class _TodoListState extends State<TodoList> {
 
   Future<void> _addTodoItem(String title, String content) {
     return listToDo
-        .add({'data': title, 'desc': content, 'time_inserted': FieldValue.serverTimestamp()})
-        /*{'data': desc, 'time_inserted': FieldValue.serverTimestamp()})*/;
+        .add({'data': title, 'desc': content, 'time_inserted': FieldValue.serverTimestamp()});
   }
 
   Future<void> _edit(String update, String id) {
     return listToDo.doc(id).update({'desc': update});
   }
+
+
 
   void _editTodoItem(String data, String id) {
     twoController.text = data;
@@ -104,9 +105,8 @@ class _TodoListState extends State<TodoList> {
             new TextButton(
               child: new Text('Edit'),
               onPressed: () {
-                _edit(oneController.text, id);
+                _edit(twoController.text, id);
                 Navigator.of(context).pop();
-                twoController.clear();
               },
             )
           ],
@@ -121,11 +121,10 @@ class _TodoListState extends State<TodoList> {
 
   // display a dialog for the user to enter items
   Future<dynamic> _displayDialog(BuildContext context) async {
-    return showDialog(
+    return showDialog (
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-
               title: TextField(
                 controller: oneController,
                 decoration: InputDecoration(
