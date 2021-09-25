@@ -26,9 +26,9 @@ class _TodoListState extends State<TodoList> {
           if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
           if (snapshot.connectionState == ConnectionState.waiting)
-            return (Center(
+            return Center(
               child: CircularProgressIndicator(),
-            ));
+            );
           return ListView(
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
@@ -39,7 +39,7 @@ class _TodoListState extends State<TodoList> {
               return Slidable(
                 key: Key(document.id),
                 child: ListTile(
-                  title: Text("Title :" + data["data"]),
+                  title: Text("Title: " + data["data"]),
                   /*subtitle: Text("Content: " +data["desc"]),*/
                 ),
                 actionPane: SlidableDrawerActionPane(),
@@ -54,7 +54,7 @@ class _TodoListState extends State<TodoList> {
                 secondaryActions: [
                   IconSlideAction(
                     caption: 'Edit',
-                    color: Color(0xFF6C63FF),
+                    color: Theme.of(context).backgroundColor,
                     icon: Icons.edit,
                     onTap: () => _editTodoItem(document['desc'], document.id),
                   ),
@@ -70,7 +70,7 @@ class _TodoListState extends State<TodoList> {
         onPressed: () => _displayDialog(context),
         tooltip: 'Add Item',
         child: Icon(Icons.add),
-        backgroundColor: Color(0xFF6C63FF),
+        backgroundColor: Theme.of(context).backgroundColor,
       ),
     );
   }
@@ -79,11 +79,11 @@ class _TodoListState extends State<TodoList> {
     return listToDo.add({
       'data': title,
       'desc': content,
-      'time_inserted': FieldValue.serverTimestamp()
+      'time_inserted': FieldValue.serverTimestamp(),
     });
   }
 
-  Future<void> _edit(String update, String id) {
+  Future<void> _edit(String id, String update) {
     return listToDo.doc(id).update({'desc': update});
   }
 
@@ -93,18 +93,19 @@ class _TodoListState extends State<TodoList> {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return new AlertDialog(
-          title: new Text('Edit $data'),
+        return AlertDialog(
+          title: Text('Edit $data'),
           content: TextField(
             controller: twoController,
             decoration: const InputDecoration(hintText: "type here"),
           ),
           actions: <Widget>[
-            new TextButton(
-              child: new Text('Edit'),
+            TextButton(
+              child: Text('Edit'),
               onPressed: () {
-                _edit(twoController.text, id);
+                _edit(id, twoController.text);
                 Navigator.of(context).pop();
+                twoController.clear();
               },
             )
           ],
