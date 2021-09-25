@@ -21,28 +21,25 @@ class _TodoListState extends State<TodoList> {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream:
-        listToDo.orderBy('time_inserted', descending: false).snapshots(),
+            listToDo.orderBy('time_inserted', descending: false).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError)
-            return Text('Error: ${snapshot.error}');
+          if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
           if (snapshot.connectionState == ConnectionState.waiting)
             return (Center(
               child: CircularProgressIndicator(),
             ));
           return ListView(
-            children: snapshot.data!.docs
-                .map((DocumentSnapshot document) {
-              Map<String, dynamic>  data =
-              document.data()! as Map<String, dynamic>;
-
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
 
               //print(document.id);
 
               return Slidable(
                 key: Key(document.id),
                 child: ListTile(
-                  title: Text("Title :" +data["data"]),
+                  title: Text("Title :" + data["data"]),
                   /*subtitle: Text("Content: " +data["desc"]),*/
                 ),
                 actionPane: SlidableDrawerActionPane(),
@@ -70,24 +67,25 @@ class _TodoListState extends State<TodoList> {
       /*ListView(children: _getItems()),
       // add items to the to-do list*/
       floatingActionButton: FloatingActionButton(
-          onPressed: () => _displayDialog(context),
-          tooltip: 'Add Item',
-          child: Icon(Icons.add),
-          backgroundColor: Color(0xFF6C63FF),
+        onPressed: () => _displayDialog(context),
+        tooltip: 'Add Item',
+        child: Icon(Icons.add),
+        backgroundColor: Color(0xFF6C63FF),
       ),
     );
   }
 
   Future<void> _addTodoItem(String title, String content) {
-    return listToDo
-        .add({'data': title, 'desc': content, 'time_inserted': FieldValue.serverTimestamp()});
+    return listToDo.add({
+      'data': title,
+      'desc': content,
+      'time_inserted': FieldValue.serverTimestamp()
+    });
   }
 
   Future<void> _edit(String update, String id) {
     return listToDo.doc(id).update({'desc': update});
   }
-
-
 
   void _editTodoItem(String data, String id) {
     twoController.text = data;
@@ -121,43 +119,43 @@ class _TodoListState extends State<TodoList> {
 
   // display a dialog for the user to enter items
   Future<dynamic> _displayDialog(BuildContext context) async {
-    return showDialog (
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-              title: TextField(
-                controller: oneController,
-                decoration: InputDecoration(
-                hintText: "Enter name of task",
+          title: TextField(
+            controller: oneController,
+            decoration: InputDecoration(
+              hintText: "Enter name of task",
             ),
-            ),
-              content: TextField(
-                controller: twoController,
-               decoration: InputDecoration(
-                hintText: "Enter Description for the task",
-              ),
           ),
-             actions: <Widget>[
+          content: TextField(
+            controller: twoController,
+            decoration: InputDecoration(
+              hintText: "Enter Description for the task",
+            ),
+          ),
+          actions: <Widget>[
             // add button
-                TextButton(
-                  child: const Text('ADD'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _addTodoItem(oneController.text,twoController.text);
-                    oneController.clear();
-                    twoController.clear();
-                  },
-                ),
-                // Cancel button
-                TextButton(
-                  child: const Text('CANCEL'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          },
+            TextButton(
+              child: const Text('ADD'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _addTodoItem(oneController.text, twoController.text);
+                oneController.clear();
+                twoController.clear();
+              },
+            ),
+            // Cancel button
+            TextButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
         );
-      }
-    }
+      },
+    );
+  }
+}
